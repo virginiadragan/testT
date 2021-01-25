@@ -1,0 +1,32 @@
+2021-01-24 19:15:19.516300 [debug][application] Rendering view file: D:\yii_template/resources/views/site/index.php
+
+Message context:
+
+time: 1611515719.516275
+memory: 8416928
+category: 'application'
+
+2021-01-24 19:15:19.517100 [debug][application] Rendering view file: D:\yii_template/resources/layout/main.php
+
+Message context:
+
+time: 1611515719.517081
+memory: 8505016
+category: 'application'
+
+2021-01-24 19:15:20.509900 [debug][application] Rendering view file: D:\yii_template/resources/views/site/404.php
+
+Message context:
+
+time: 1611515720.509905
+memory: 8379584
+category: 'application'
+
+2021-01-24 19:15:20.511000 [debug][application] Rendering view file: D:\yii_template/resources/layout/main.php
+
+Message context:
+
+time: 1611515720.511031
+memory: 8400664
+category: 'application'
+
