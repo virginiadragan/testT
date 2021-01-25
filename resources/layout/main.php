@@ -58,12 +58,16 @@ $this->setJsVar($assetManager->getJsVar());
                                 ? $urlMatcher->getCurrentUri()->getPath()
                                 : ''
                         )
-                        ->items([]) ?>
+                        ->items([
+                            ['label' => 'Home', 'url' => '/site/index'],
+                            ['label' => 'About', 'url' => '/site/about'],
+                            ['label' => 'Contact', 'url' => '/site/contact'],
+                        ]) ?>
 
                     <?= NavBar::end() ?>
                 </div>
                 <div class="hero-body is-light">
-                    <div class="container has-text-centered">
+                    <div class="container">
                         <?= $content ?>
                     </div>
                 </div>

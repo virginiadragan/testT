@@ -5,31 +5,31 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Books;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Psr\Http\Message\ResponseInterface;
-use Yiisoft\Yii\View\ViewRenderer;
-use Cycle\ORM\Transaction;
-use Cycle\ORM\ORMInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Yiisoft\DataResponse\DataResponseFactoryInterface;
 use Cycle\ORM;
-use Cycle\ORM\Select\Repository;
-
 use Cycle\Schema;
 use Spiral\Database;
 use Cycle\Annotated;
-use Doctrine\Common\Annotations\AnnotationRegistry;
+use OpenApi\Annotations as OA;
 
-
-class SiteController
+/**
+ * @OA\Info(title="Yii demo API", version="2.0")
+ */
+class TestController implements MiddlewareInterface
 {
-    private ViewRenderer $viewRenderer;
+    private DataResponseFactoryInterface $responseFactory;
     private $dbal;
-
-    public function __construct(ViewRenderer $viewRenderer)
+    public function __construct(DataResponseFactoryInterface $responseFactory)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('site');
+        $this->responseFactory = $responseFactory;
     }
 
-    public function index(): ResponseInterface
-    {
+    public function getBooks () {
         $this->dbal = new Database\DatabaseManager(
             new Database\Config\DatabaseConfig([
                 'default'     => 'default',
@@ -64,17 +64,18 @@ class SiteController
             new Schema\Generator\SyncTables(),        // sync table changes to database
             new Schema\Generator\GenerateTypecast(),  // typecast non string columns
         ]);
-        $orm = $orm->withSchema(new ORM\Schema($schema));
+        return $orm = $orm->withSchema(new ORM\Schema($schema));
+    }
 
-        $u = $orm->getRepository(Books::class)->findAll();
-
-//        $book = new Books();
-//        $book->setBookName('test book');
-//        $book->setId(3);
-//        $book->setYear(1998);
-//        $t = new ORM\Transaction($orm);
-//        $t->persist($book);
-//        $t->run();
-        return $this->viewRenderer->render('index', ['books' => $u]);
+    /**
+     * @OA\Get(
+     *     path="/api/v1/books",
+     *     @OA\Response(response="200", description="Get api version")
+     * )
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $books = $this->getBooks()->getRepository(Books::class)->findAll();
+        return $this->responseFactory->createResponse($books);
     }
 }

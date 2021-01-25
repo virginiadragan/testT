@@ -7,6 +7,8 @@ namespace App\Controller;
 use App\Entity\Books;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Yii\View\ViewRenderer;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Cycle\ORM\Transaction;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM;
@@ -18,18 +20,18 @@ use Cycle\Annotated;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
 
-class SiteController
+class BookController
 {
     private ViewRenderer $viewRenderer;
     private $dbal;
+    private ResponseFactoryInterface $responseFactory;
 
-    public function __construct(ViewRenderer $viewRenderer)
+    public function __construct(ResponseFactoryInterface $responseFactory)
     {
-        $this->viewRenderer = $viewRenderer->withControllerName('site');
+        $this->responseFactory = $responseFactory;
     }
 
-    public function index(): ResponseInterface
-    {
+    public function dbSettings () {
         $this->dbal = new Database\DatabaseManager(
             new Database\Config\DatabaseConfig([
                 'default'     => 'default',
@@ -64,17 +66,27 @@ class SiteController
             new Schema\Generator\SyncTables(),        // sync table changes to database
             new Schema\Generator\GenerateTypecast(),  // typecast non string columns
         ]);
-        $orm = $orm->withSchema(new ORM\Schema($schema));
 
-        $u = $orm->getRepository(Books::class)->findAll();
+        return $orm = $orm->withSchema(new ORM\Schema($schema));
+//        $u = $orm->getRepository(Books::class)->findAll();
+    }
 
+    public function add(ServerRequestInterface $request): ResponseInterface
+    {
+//        $id = $request->getAttribute('id', '');
+//        $name = $request->getAttribute('name', '');
+//        $year = $request->getAttribute('year', '');
+//        $authorId = $request->getAttribute('authorId', '');
+//
 //        $book = new Books();
-//        $book->setBookName('test book');
-//        $book->setId(3);
-//        $book->setYear(1998);
-//        $t = new ORM\Transaction($orm);
+//        $book->setId(intval($id));
+//        $book->setBookName($name);
+//        $book->setYear($year);
+//        $book->setAuthor($authorId);
+//        $t = new ORM\Transaction($this->dbSettings());
 //        $t->persist($book);
 //        $t->run();
-        return $this->viewRenderer->render('index', ['books' => $u]);
+
+        return  $this->responseFactory->createResponse();
     }
 }
